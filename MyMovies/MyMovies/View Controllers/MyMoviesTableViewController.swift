@@ -7,70 +7,25 @@
 //
 
 import UIKit
+import Foundation
 import CoreData
 
 class MyMoviesTableViewController: UITableViewController {
     
+    @IBOutlet weak var myMovieTable: UITableView!
+    
+    
     var movieControllerRef = MovieController.shared
     var nsfetchres = MoviesManager.shared.fetchResults
+    
+    override func viewWillAppear(_ animated: Bool) {
+        myMovieTable.reloadData()    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         nsfetchres.delegate = self as? NSFetchedResultsControllerDelegate
         MoviesManager().getMovieOnFB()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        tableView.reloadData()
-    }
-    
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
-    {
-        tableView.beginUpdates()
-    }
-    
-    func controller(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
-        didChange sectionInfo: NSFetchedResultsSectionInfo,
-        atSectionIndex sectionIndex: Int,
-        for type: NSFetchedResultsChangeType)
-    {
-        switch type {
-        case .insert:
-            tableView.insertSections(IndexSet(integer: sectionIndex), with: .automatic)
-        case .delete:
-            tableView.deleteSections(IndexSet(integer:sectionIndex), with: .automatic)
-        default:
-            break
-        }
-        
-    }
-    
-    func controller(controller: NSFetchedResultsController<NSFetchRequestResult>,
-        didChange anObject: Any,
-        at indexPath: IndexPath?,
-        for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
-    {
-        
-        switch type {
-        case .insert:
-            tableView.insertRows(at: [newIndexPath!], with: .automatic)
-        case .delete:
-            tableView.deleteRows(at: [indexPath!], with: .automatic)
-        case .update:
-            tableView.reloadRows(at: [indexPath!], with: .automatic)
-        case .move:
-            tableView.deleteRows(at: [indexPath!], with: .automatic)
-            tableView.insertRows(at: [newIndexPath!], with: .automatic)
-        }
-        
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
-    {
-        tableView.endUpdates()
-    }
-    
     
     //Stretch Goal
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -105,4 +60,52 @@ class MyMoviesTableViewController: UITableViewController {
             MoviesManager().deleteMovie(movie: nsfetchres.object(at: indexPath))
         }
     }
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
+    {
+        tableView.beginUpdates()
+    }
+    
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange sectionInfo: NSFetchedResultsSectionInfo,
+        atSectionIndex sectionIndex: Int,
+        for type: NSFetchedResultsChangeType)
+    {
+        switch type {
+        case .insert:
+            tableView.insertSections(IndexSet(integer: sectionIndex), with: .automatic)
+        case .delete:
+            tableView.deleteSections(IndexSet(integer:sectionIndex), with: .automatic)
+        default:
+            break
+        }
+        
+    }
+    
+    func controller(controller: NSFetchedResultsController<NSFetchRequestResult>,
+                    didChange anObject: Any,
+                    at indexPath: IndexPath?,
+                    for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?)
+    {
+        
+        switch type {
+        case .insert:
+            tableView.insertRows(at: [newIndexPath!], with: .automatic)
+        case .delete:
+            tableView.deleteRows(at: [indexPath!], with: .automatic)
+        case .update:
+            tableView.reloadRows(at: [indexPath!], with: .automatic)
+        case .move:
+            tableView.deleteRows(at: [indexPath!], with: .automatic)
+            tableView.insertRows(at: [newIndexPath!], with: .automatic)
+        }
+        
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>)
+    {
+        tableView.endUpdates()
+    }
+    
 }
